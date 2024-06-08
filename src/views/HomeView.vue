@@ -15,19 +15,19 @@
       <div class="userInput" style="margin-bottom: 50px">
         <form @submit.prevent="postGenerateCalc">
           <div style="margin-bottom: 10px">
-            <label class="inputLabel">Purchase Price: </label>
-            <input type="number" step="1000" v-model="monthly_contribution" placeholder="E.g. 100000" />
+            <label class="inputLabel">Monthly Contribution: </label>
+            <input type="number" step="1" v-model="monthly_contribution" placeholder="E.g. 100000" />
           </div>
           <div style="margin-bottom: 10px">
-            <label class="inputLabel">Interest Rate in %: </label>
+            <label class="inputLabel">Yearly Interest Rate in %: </label>
             <input type="number" step="0.01" v-model="yearly_interest_rate" placeholder="E.g. 5.5" />
           </div>
           <div style="margin-bottom: 10px">
-            <label class="inputLabel">Down Payment in $: </label>
+            <label class="inputLabel">Starting Capital: </label>
             <input type="number" step="1000" v-model="starting_capital" placeholder="40000" />
           </div>
           <div style="margin-bottom: 10px">
-            <label class="inputLabel">Mortgage Term: </label>
+            <label class="inputLabel">Term: </label>
             <input type="text" v-model="term" placeholder="5 years" />
           </div>
           <button type="submit" class="button is-success">Generate Calc</button>
@@ -43,9 +43,17 @@
           tableStyle="max-width: 95%"
         >
           <Column field="term" header="Term" sortable style="width: 20%"></Column>
-          <Column field="monthly_contribution" header="Monthly Contribution" sortable style="width: 20%"></Column>
+          <Column field="monthly_contribution" header="Monthly Contribution" sortable style="width: 20%">
+            <template #body="slotProps">
+              {{ formatFloat(slotProps.data.monthly_contribution) }}
+            </template>
+          </Column>
           <Column field="yearly_interest_rate" header="Yearly Interest Rate" sortable style="width: 20%"></Column>
-          <Column field="total_capital" header="Total Capital" sortable style="width: 20%"></Column>
+          <Column field="total_capital" header="Total Capital" sortable style="width: 20%">
+            <template #body="slotProps">
+              {{ formatFloat(slotProps.data.total_capital) }}
+            </template>
+          </Column>
         </DataTable>
       </div>
     </div>
@@ -65,6 +73,16 @@ export default {
   data() {
     return {
       latestCalcs: [],
+    }
+  },
+  computed: {
+    formatFloat() {
+      return(res) => {
+        return new Intl.NumberFormat('de-CH', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(res);
+      }
     }
   },
   components: {
